@@ -18,6 +18,12 @@ jobs:
       matrix:
         node-version: [16.x]
     steps:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
@@ -27,3 +33,6 @@ jobs:
     - run: npm ci
     - run: npm run build --if-present
     - run: ./deploy.sh
+      env:
+        S3_URL: ${{ secrets.S3_URL }}
+        CLOUDFRONT_DISTRO_ID: ${{ secrets.CLOUDFRONT_DISTRO_ID }}
